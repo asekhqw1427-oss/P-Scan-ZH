@@ -1,0 +1,15 @@
+node_modules/
+artifacts/
+dist/
+test-results/
+samples/
+validation/
+private-data/
+*.exe
+*.zip
+*.pfx
+*.p12
+*.key
+.env
+.env.*
+__pycache__/

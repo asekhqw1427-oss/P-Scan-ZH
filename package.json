@@ -1,0 +1,23 @@
+{
+  "name": "p-scan-defect-source",
+  "version": "1.5.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron app",
+    "test": "node --test tests/core.test.js tests/image-integrity.test.js tests/engine.test.js",
+    "test:folders": "node tests/folder-integration.cjs",
+    "test:desktop": "node tests/desktop-smoke.cjs",
+    "test:zh": "node tests/ui-zh-check.cjs ."
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "sharp": "0.35.5",
+    "bmp-js": "0.1.0",
+    "playwright": "1.62.1",
+    "resedit": "3.1.0",
+    "linkedom": "0.18.14"
+  },
+  "author": "Agent-QW1427",
+  "description": "P-Scan Defect 繁體中文焊墊斑點檢測工具"
+}
