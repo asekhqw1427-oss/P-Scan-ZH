@@ -1,0 +1,12 @@
+const {parseHTML}=require('linkedom'),vm=require('vm'),fs=require('fs'),assert=require('node:assert/strict');
+const root=require('node:path').resolve(process.argv[2]||'.'),{window,document}=parseHTML(fs.readFileSync(root+'/app/index.html','utf8'));
+for(const e of document.querySelectorAll('select'))Object.defineProperty(e,'value',{configurable:true,writable:true,value:e.querySelector('option')?.getAttribute('value')||''});
+const C=require(root+'/app/core.js');let state={config:{...C.DEFAULTS},history:[],pending:0,running:false,busy:false},onState;
+const good={id:'a',key:'a',filename:'測試.jpg',time:new Date().toISOString(),status:'SIMULATED',...C.classify({regions:[{valid:true,geometry:{accept:true},shape:'circle',inspection:{},partial:false}],boxes:[]},{...C.DEFAULTS,expectedPads:1}),hasPreview:true,result:{boxes:[]},width:800,height:800,originalWidth:800,originalHeight:800};
+window.scanner={state:async()=>({ok:true,value:state}),onState:f=>onState=f,result:async()=>({ok:true,value:{detail:good,preview:null}}),resetHistory:async()=>({ok:true,value:{...state,history:[]}})};
+const context=vm.createContext({window,document,console,setTimeout:()=>0,clearTimeout:()=>{}});vm.runInContext(fs.readFileSync(root+'/app/ui.js','utf8'),context);
+(async()=>{await new Promise(r=>setImmediate(r));assert.match(document.getElementById('runState').textContent,/已暫停/);assert.equal(document.documentElement.lang,'zh-Hant');
+state={...state,history:[good]};onState(state);assert.equal(document.getElementById('goodCount').textContent,'1');assert.match(document.getElementById('historyRows').textContent,/測試.jpg/);
+await vm.runInContext("showResult('a')",context);assert.match(document.getElementById('previewNote').textContent,/已檢測焊墊/);
+await document.getElementById('resetHistory').onclick();assert.match(document.getElementById('toast').textContent,/歷史紀錄已重設/);assert.equal(document.getElementById('goodCount').textContent,'0');
+assert.match(document.querySelector('footer').textContent,/Agent-QW1427/);console.log('PASS: zh-Hant UI initialization, Chinese history, counters, preview, reset, publisher label (DOM simulation; no visual/Windows test).');})().catch(e=>{console.error(e);process.exitCode=1});
