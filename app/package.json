@@ -1,0 +1,10 @@
+{
+  "name": "p-scan-defect-id",
+  "productName": "P-Scan Defect 繁體中文版",
+  "version": "1.5.1",
+  "description": "P-Scan Defect 繁體中文焊墊斑點檢測工具",
+  "main": "main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "Agent-QW1427"
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+<title>P-Scan Defect 繁體中文版</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="brand"><span class="logo">◎</span><div><small>斑點檢測 · 離線運作</small><h1>P-Scan Defect <span>1.5.1 · 繁體中文</span></h1></div></div><div class="header-actions"><span id="runState" class="pill">已暫停</span><button id="hide">縮小至系統匣</button><button id="quit">結束</button></div></header>
+<div class="notice"><strong>分類前請先校準</strong><span>請使用已確認的 Good 與 NG 影像檢查預覽。本版本檢測焊墊內的斑點，不執行 PR 殘留檢測。</span></div>
+<main><aside><div class="card setup"><div class="card-head"><div><small>01 / 來源與結果</small><h2>資料夾與模式</h2></div><span class="tag">本機</span></div>
+<fieldset id="settings">
+<label for="input">輸入資料夾 <span class="muted">僅此資料夾，不包含子資料夾</span></label><div class="path-row"><input id="input" placeholder="選擇影像來源"><button data-folder="input">選擇</button></div>
+<div class="label-row"><label>兩個結果資料夾</label><button id="outputRoot" class="link">建立結果資料夾</button></div>
+<label class="folder-kind good" for="good">Good（良品）</label><div class="path-row"><input id="good"><button data-folder="good">選擇</button></div>
+<label class="folder-kind bad" for="defect">NG-Defect（缺陷）</label><div class="path-row"><input id="defect"><button data-folder="defect">選擇</button></div>
+<label for="mode">操作模式</label><select id="mode"><option value="pilot">測試：記錄結果，不複製影像</option><option value="sort">自動：複製原始影像</option></select>
+<p class="help">保留原始檔名與內容。不同內容的同名檔案不會被覆寫。</p>
+<div class="section-title"><small>02 / 斑點檢測</small><h2>主要設定</h2></div>
+<label for="sens">斑點靈敏度 <output id="sensValue">30</output></label><input id="sens" type="range" min="0" max="100"><p class="help">數值越高，越容易標記微弱斑點，但也可能將正常紋理判為異常。</p>
+<label class="check"><input id="largeDark" type="checkbox">額外偵測遮蔽焊墊的大型深色污點</label><p class="help">大型污點使用獨立的自動閾值，不受小斑點滑桿控制。參考周圍焊墊尺寸以區分厚實污點與細線，至少需要 3 個已驗證的完整焊墊。適用於深色或混合斑點模式。</p>
+<label for="area">最小斑點面積（像素數）</label><input id="area" type="number" min="1" max="10000"><p class="help">以分析影像中相連像素的面積計算，並非直徑或微米。</p>
+<label for="roiMode">檢測範圍</label><select id="roiMode"><option value="full">整張影像中的焊墊</option><option value="rect">指定矩形範圍內的焊墊</option></select>
+<div id="roiFields" hidden><div class="two"><label>左側（%）<input id="roiX" type="number" min="0" max="99"></label><label>上方（%）<input id="roiY" type="number" min="0" max="99"></label></div><div class="two"><label>寬度（%）<input id="roiW" type="number" min="1" max="100"></label><label>高度（%）<input id="roiH" type="number" min="1" max="100"></label></div><p class="help">座標以左上角為原點。藍框外的區域不會檢測。</p></div>
+<details><summary>進階設定<small>形狀辨識、覆蓋完整性與監控</small></summary>
+<label for="inset">焊墊邊緣安全距離（%）</label><input id="inset" type="number" min="0" max="60"><p class="help">綠色邊界沿焊墊內側繪製。數值越大，斑點檢測範圍越小。</p>
+<label class="check"><input id="maskMarkers" type="checkbox">忽略長條黃色標記線</label><p class="help">註記框不視為斑點。若其遮住焊墊內部，該區域會記錄為未檢測。小型黃色點仍會檢測。</p>
+<label for="pol">斑點明暗類型</label><select id="pol"><option value="both">深色與亮色</option><option value="dark">僅深色斑點</option><option value="light">僅亮色斑點</option></select>
+<div class="two"><label>最小直徑（%）<input id="minpad" type="number" min="1" max="89"></label><label>最大直徑（%）<input id="maxpad" type="number" min="2" max="90"></label></div><p class="help">以檢測範圍短邊的百分比表示。相機倍率改變時請調整。</p>
+<div class="two"><label>辨識靈敏度<input id="padsens" type="number" min="0" max="100"></label><label>對比閾值<input id="contrast" type="number" min="3" max="100"></label></div>
+<label class="check"><input id="sameSize" type="checkbox">同一影像內的焊墊尺寸大致一致</label>
+<label for="expectedPads">檢測範圍內的參考焊墊數量</label><input id="expectedPads" type="number" min="0" max="1000"><p class="help"><strong>覆蓋範圍參考資訊：</strong> 若已檢測的焊墊內部未發現缺陷，數量不符、參考數量為 0 或焊墊被裁切不會阻止判定 Good。被裁切部分仍記錄為未檢測。T 候選、邊界不明、標記遮蔽或沒有可檢測焊墊時，仍需人工複核。</p>
+<label for="stableSeconds">等待檔案穩定（秒）</label><input id="stableSeconds" type="number" min="2" max="60">
+<label class="check"><input id="startAtLogin" type="checkbox">登入 Windows 時啟動並開始監控</label>
+</details>
+<label class="check approval"><input id="approved" type="checkbox">我已檢查目前參數與範圍的預覽，並同意進行分類</label></fieldset>
+<div class="setup-actions"><button id="test" class="secondary">03 · 測試影像／預覽</button><button id="save">儲存設定</button><button id="start" class="primary">04 · 開始背景掃描</button><button id="pause" class="secondary">暫停掃描</button></div><p id="saveState" class="help">請選擇資料夾，再測試影像。</p></div></aside>
+<section class="workspace"><div class="stats"><div><small>佇列</small><b id="pending">0</b></div><div><small>Good（良品）</small><b id="goodCount">0</b></div><div><small>NG-Defect（缺陷）</small><b id="ngCount">0</b></div><div><small>待複核</small><b id="reviewCount">0</b></div><div><small>處理失敗</small><b id="errorCount">0</b></div></div><p class="stats-note">顯示目前歷史紀錄的統計，包含測試模式結果。</p>
+<div id="status" role="status">請設定資料夾並進行影像測試。</div>
+<div class="card preview"><div class="card-head"><div><small>檢測預覽</small><h2 id="previewTitle">分類前請檢查結果</h2></div><span id="category" class="pill">等待影像</span></div>
+<div id="coverage" class="coverage" role="status">檢測覆蓋完整性會顯示於此。</div>
+<p class="help">虛線：焊墊形狀。綠色實線：實際檢測斑點的區域。被裁切的焊墊（*）會略過並記錄。</p><div class="legend"><span>綠色：斑點檢測邊界</span><span class="bad">D：缺陷候選</span><span class="amber">橙色／T：邊界候選或待複核區域</span><label>縮放 <select id="zoom"><option value="fit">符合視窗</option><option value="150">150%</option><option value="200">200%</option></select></label></div>
+<div class="image-wrap"><div id="empty"><span>◎</span><h3>查看實際檢測範圍</h3><p>測試影像以查看辨識到的焊墊、內部邊界及斑點標記。</p></div><img id="previewImage" alt="斑點檢測預覽" hidden></div>
+<p id="previewNote" class="help">紅框 D：斑點證據。橙框 T：靠近邊界的候選，尚不足以判定 NG。標記預覽會另外儲存，結果資料夾中的原始影像不會加上標記。</p>
+<div class="reference-action"><button id="useCount" disabled>使用目前焊墊數量作為參考</button><small id="referenceHelp">請先計算並核對預覽中的焊墊。參考數量僅適用於相同排列。</small></div>
+<details id="details"><summary id="detailSummary">缺陷候選詳情</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>焊墊</th><th>說明</th><th>像素</th></tr></thead><tbody id="defectRows"></tbody></table></div></details></div>
+<div class="card history"><div class="card-head"><div><small>檢測歷史紀錄</small><h2>結果與原因</h2></div><div class="actions"><button id="retry">重試擱置項目</button><button id="resetHistory">重設歷史紀錄</button><button id="csv">匯出 CSV</button></div></div>
+<div class="history-tools"><select id="filter"><option value="all">全部紀錄</option><option value="Good">Good（良品）</option><option value="NG-Defect">NG-Defect（缺陷）</option><option value="Review">待複核</option><option value="Error">處理失敗</option></select><small>顯示最新 150 筆；CSV 包含完整紀錄</small></div>
+<div class="table-scroll history-scroll"><table><thead><tr><th>檔名／時間</th><th>檢測結果</th><th>斑點</th><th>覆蓋完整性／原因</th><th>檔案狀態</th></tr></thead><tbody id="historyRows"></tbody></table></div>
+<div class="folder-actions"><button data-open="input">輸入資料夾</button><button data-open="good">Good（良品）</button><button data-open="defect">NG-Defect（缺陷）</button><button data-open="data">紀錄與標記影像</button></div></div>
+<footer><strong>發行者：Agent-QW1427 · 繁體中文版 1.5.1</strong><br>Good 僅適用於成功檢測的焊墊內部。數量不符或焊墊被裁切時，可判定為 Good 並註記部分檢測。即使其他區域未完整檢測，有效斑點仍會判定 NG。睡眠、登出或關機會停止監控。本版本不控制相機或 PLC。</footer>
+</section></main><div id="toast" role="alert" hidden></div><script src="ui.js"></script></body></html>
