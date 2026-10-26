@@ -1,0 +1,36 @@
+{
+  "companyName": "Agent-QW1427",
+  "fileVersion": "1.5.1.0",
+  "signed": false,
+  "unchangedSections": [
+    ".text",
+    ".rdata",
+    ".data",
+    ".pdata",
+    ".eh_fram",
+    ".fptable",
+    ".rodata",
+    ".tls",
+    "CPADinfo",
+    "LZMADEC",
+    "_RDATA",
+    "malloc_h",
+    "prot",
+    ".reloc"
+  ],
+  "versionInfo": [
+    [
+      {
+        "CompanyName": "Agent-QW1427",
+        "FileDescription": "P-Scan Defect 繁體中文版",
+        "FileVersion": "1.5.1.0",
+        "InternalName": "P-Scan-Defect",
+        "LegalCopyright": "Copyright (C) 2015 GitHub, Inc. All rights reserved.",
+        "OriginalFilename": "P-Scan-Defect.exe",
+        "ProductName": "P-Scan Defect 繁體中文版",
+        "ProductVersion": "1.5.1.0",
+        "SquirrelAwareVersion": "1"
+      }
+    ]
+  ]
+}
